@@ -17,7 +17,7 @@ public abstract class GenericJsonConverter<T> implements AttributeConverter<T, S
 
     @Override
     public String convertToDatabaseColumn(T attribute) {
-        if (attribute == null) return "null";
+        if (attribute == null) return null;
         try {
             return objectMapper.writeValueAsString(attribute);
         } catch (JsonProcessingException e) {
