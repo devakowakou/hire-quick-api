@@ -3,19 +3,16 @@ package com.hirequick.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "user_sessions")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class UserSession {
 
     @Id
@@ -29,38 +26,32 @@ public class UserSession {
     @Column(nullable = false, unique = true, length = 255)
     private String sessionToken;
 
-    @Column(unique = true, length = 255)
+    @Column(unique = true, length = 255, nullable = true)
     private String refreshToken;
 
-    @Column(length = 45)
+    @Column(length = 45, nullable = true)
     private String ipAddress;
 
     @Lob
+    @Column(nullable = true)
     private String userAgent;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = true)
     private String deviceType; // mobile, desktop, tablet
 
-    @Column(length = 200)
+    @Column(length = 200, nullable = true)
     private String location;
 
+    @Column(nullable = false)
     private Boolean isActive = true;
 
+    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private ZonedDateTime createdAt;
 
+    @UpdateTimestamp
     private ZonedDateTime lastActivity;
 
+    @Column(nullable = true)
     private ZonedDateTime expiresAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
-        this.lastActivity = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.lastActivity = ZonedDateTime.now();
-    }
 }

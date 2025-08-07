@@ -1,30 +1,28 @@
 package com.hirequick.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.ZonedDateTime;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import com.hirequick.enums.UserType;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
+@Data
+
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class User {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Email
     @Column(nullable = false, unique = true, length = 255)
     private String email;
 
@@ -32,7 +30,7 @@ public class User {
     private String username;
 
     @Column(nullable = false, length = 255)
-    private String hashedPassword;
+    private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -50,9 +48,11 @@ public class User {
     @Column(length = 20)
     private String phone;
 
+    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private ZonedDateTime createdAt;
 
+    @UpdateTimestamp
     private ZonedDateTime updatedAt;
 
     private ZonedDateTime lastLogin;
@@ -73,14 +73,4 @@ public class User {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private RecruiterProfile recruiterProfile;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
 }

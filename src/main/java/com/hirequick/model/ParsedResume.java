@@ -3,17 +3,16 @@ package com.hirequick.model;
 import com.hirequick.converter.GenericJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.ZonedDateTime;
 import java.util.List;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "parsed_resumes")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParsedResume {
@@ -127,18 +126,12 @@ public class ParsedResume {
     @Column(columnDefinition = "jsonb")
     private List<String> parsingErrors;
 
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private ZonedDateTime createdAt;
+
+    @UpdateTimestamp
     private ZonedDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = ZonedDateTime.now();
-    }
 
     @Override
     public String toString() {

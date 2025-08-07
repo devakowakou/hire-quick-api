@@ -1,19 +1,16 @@
 package com.hirequick.model;
 
-import com.hirequick.converter.GenericJsonConverter;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "application_form_fields")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationFormField {
@@ -22,43 +19,68 @@ public class ApplicationFormField {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long jobId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "job_id", nullable = false)
+    private Job job;
 
-    @Column(length = 50, nullable = false)
+    // Field configuration
+    @Column(name = "field_type", length = 50, nullable = false)
     private String fieldType;
 
-    @Column(length = 200, nullable = false)
+    @Column(nullable = false, length = 200)
     private String label;
 
     @Column(length = 200)
     private String placeholder;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String helpText;
 
+    // Field validation
+    @Column(name = "is_required")
     private Boolean isRequired = true;
+
     private Integer minLength;
+
     private Integer maxLength;
 
-    @Convert(converter = GenericJsonConverter.class)
+    // Field options (for select, radio, checkbox)
+    @ElementCollection
+    @CollectionTable(name = "application_form_field_options", joinColumns = @JoinColumn(name = "form_field_id"))
+    @Column(name = "option_value")
     private List<String> options;
 
-    @Convert(converter = GenericJsonConverter.class)
+    // File upload settings
+    @ElementCollection
+    @CollectionTable(name = "application_form_field_file_types", joinColumns = @JoinColumn(name = "form_field_id"))
+    @Column(name = "file_type")
     private List<String> allowedFileTypes;
 
+    @Column(name = "max_file_size_mb")
     private Integer maxFileSizeMb = 10;
-    private Integer orderIndex = 0;
 
+    // Field ordering
+    @Column(name = "field_order")
+    private Integer order = 0;
+
+    // Timestamps
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
-    }
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ApplicationFormField> formFields;
 
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = ZonedDateTime.now();
+    @Override
+    public String toString() {
+        return "ApplicationFormField{" +
+                "id=" + id +
+                ", label='" + label + '\'' +
+                ", jobId=" + (job != null ? job.getId() : null) +
+                '}';
     }
 }

@@ -2,39 +2,35 @@ package com.hirequick.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.ZonedDateTime;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "company_followers")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class CompanyFollower {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     private Boolean notifyNewJobs = true;
+
     private Boolean notifyCompanyUpdates = true;
 
+    @CreationTimestamp
     private ZonedDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
-    }
 }

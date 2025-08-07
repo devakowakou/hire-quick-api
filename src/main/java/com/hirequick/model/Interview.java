@@ -5,17 +5,16 @@ import com.hirequick.enums.InterviewType;
 import com.hirequick.converter.GenericJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.ZonedDateTime;
 import java.util.List;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "interviews")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Interview {
@@ -24,11 +23,11 @@ public class Interview {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "application_id", nullable = false)
     private Application application;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "interviewer_id", nullable = false)
     private RecruiterProfile interviewer;
 
@@ -45,9 +44,10 @@ public class Interview {
     @Column(nullable = false)
     private ZonedDateTime scheduledAt;
 
+    @Column(nullable = false)
     private Integer durationMinutes = 60;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String timezone = "UTC";
 
     @Column(length = 500)
@@ -63,7 +63,7 @@ public class Interview {
     private String meetingPassword;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private InterviewStatus status = InterviewStatus.SCHEDULED;
 
     @Lob
@@ -83,22 +83,22 @@ public class Interview {
     @Column(columnDefinition = "jsonb")
     private List<Long> additionalInterviewers;
 
+    @Column(nullable = false)
     private Boolean reminderSentCandidate = false;
+
+    @Column(nullable = false)
     private Boolean reminderSentInterviewer = false;
 
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
+
+    @Column(nullable = true)
     private ZonedDateTime completedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = ZonedDateTime.now();
-    }
 
     @Override
     public String toString() {

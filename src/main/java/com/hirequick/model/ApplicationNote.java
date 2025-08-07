@@ -2,16 +2,15 @@ package com.hirequick.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.ZonedDateTime;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 
 @Entity
 @Table(name = "application_notes")
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationNote {
@@ -29,22 +28,18 @@ public class ApplicationNote {
     private RecruiterProfile author;
 
     @Lob
+    @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private Boolean isPrivate = true;
 
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private ZonedDateTime createdAt;
+
+    @UpdateTimestamp
     private ZonedDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = ZonedDateTime.now();
-    }
 
     @Override
     public String toString() {

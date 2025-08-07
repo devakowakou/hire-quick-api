@@ -2,17 +2,15 @@ package com.hirequick.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.ZonedDateTime;
 import java.util.List;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table(name = "recruiter_profiles")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecruiterProfile {
@@ -57,27 +55,18 @@ public class RecruiterProfile {
 
     private Boolean profileCompleted = false;
 
+    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private ZonedDateTime createdAt;
 
+    @UpdateTimestamp
     private ZonedDateTime updatedAt;
 
-    // Relations
     @OneToMany(mappedBy = "recruiter", cascade = CascadeType.ALL)
     private List<Job> postedJobs;
 
     @OneToMany(mappedBy = "interviewer", cascade = CascadeType.ALL)
     private List<Interview> conductedInterviews;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
 
     @Transient
     public String getFullName() {

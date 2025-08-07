@@ -4,17 +4,17 @@ import com.hirequick.converter.GenericJsonConverter;
 import com.hirequick.enums.ApplicationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "applications")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Application {
@@ -23,12 +23,11 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Foreign keys
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "job_id", nullable = false)
     private Job job;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "candidate_id", nullable = false)
     private CandidateProfile candidate;
 
@@ -36,7 +35,6 @@ public class Application {
     @JoinColumn(name = "referrer_id")
     private User referrer;
 
-    // Status
     @Enumerated(EnumType.STRING)
     @Column(length = 30, nullable = false)
     private ApplicationStatus status = ApplicationStatus.SUBMITTED;
@@ -47,7 +45,6 @@ public class Application {
     @Column(length = 500)
     private String resumeFile;
 
-    // JSON dynamic form responses
     @Convert(converter = GenericJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> formResponses;
@@ -60,15 +57,21 @@ public class Application {
 
     private Double internalRating;
 
+    @Column(nullable = false)
     private Boolean viewedByRecruiter = false;
 
     private ZonedDateTime viewedAt;
 
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
+
     private ZonedDateTime submittedAt;
 
-    // Relationships
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationFile> uploadedFiles;
 
@@ -78,36 +81,13 @@ public class Application {
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Interview> interviews;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = ZonedDateTime.now();
-    }
-
     @Override
     public String toString() {
         return String.format("<Application(id=%d, job_id=%d, status='%s')>", id, job.getId(), status);
     }
 
     public String getStatusDisplay() {
-        switch (status) {
-            case DRAFT: return ApplicationStatus.DRAFT.name();
-            case SUBMITTED: return ApplicationStatus.SUBMITTED.name();
-            case UNDER_REVIEW: return ApplicationStatus.UNDER_REVIEW.name();
-            case SCREENING: return ApplicationStatus.SCREENING.name();
-            case INTERVIEW_SCHEDULED: return ApplicationStatus.INTERVIEW_SCHEDULED.name();
-            case INTERVIEWED: return ApplicationStatus.INTERVIEWED.name();
-            case OFFER_EXTENDED: return ApplicationStatus.OFFER_EXTENDED.name();
-            case OFFER_ACCEPTED: return ApplicationStatus.OFFER_ACCEPTED.name();
-            case OFFER_DECLINED: return ApplicationStatus.OFFER_DECLINED.name();
-            case HIRED: return ApplicationStatus.HIRED.name();
-            case REJECTED: return ApplicationStatus.REJECTED.name();
-            case WITHDRAWN: return ApplicationStatus.WITHDRAWN.name();
-            default: return status.name();
-        }
+        // Option simple
+        return status.name();
     }
 }

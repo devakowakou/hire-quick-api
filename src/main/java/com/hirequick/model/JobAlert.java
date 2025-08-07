@@ -1,66 +1,70 @@
 package com.hirequick.model;
 
-import com.hirequick.converter.GenericJsonConverter;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "job_alerts")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class JobAlert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(length = 200, nullable = false)
+    @Column(nullable = false, length = 200)
     private String name;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "job_alert_keywords", joinColumns = @JoinColumn(name = "job_alert_id"))
+    @Column(name = "keyword")
     private List<String> keywords;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "job_alert_locations", joinColumns = @JoinColumn(name = "job_alert_id"))
+    @Column(name = "location")
     private List<String> locations;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "job_alert_job_types", joinColumns = @JoinColumn(name = "job_alert_id"))
+    @Column(name = "job_type")
     private List<String> jobTypes;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "job_alert_experience_levels", joinColumns = @JoinColumn(name = "job_alert_id"))
+    @Column(name = "experience_level")
     private List<String> experienceLevels;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "job_alert_remote_types", joinColumns = @JoinColumn(name = "job_alert_id"))
+    @Column(name = "remote_type")
     private List<String> remoteTypes;
 
     private Integer minSalary;
     private Integer maxSalary;
 
+    @Builder.Default
     private Boolean isActive = true;
 
+    @Builder.Default
     @Column(length = 20)
-    private String frequency = "daily";
+    private String frequency = "daily"; // immediate, daily, weekly
 
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime createdAt;
+
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime updatedAt;
+
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private ZonedDateTime lastSent;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
 }

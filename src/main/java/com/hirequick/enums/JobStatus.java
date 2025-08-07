@@ -1,9 +1,19 @@
 package com.hirequick.enums;
 
 public enum JobStatus {
-    DRAFT,
-    ACTIVE,
-    PAUSED,
-    CLOSED,
-    EXPIRED
+    DRAFT("draft"),
+    ACTIVE("active"),
+    PAUSED("paused"),
+    CLOSED("closed"),
+    EXPIRED("expired");
+
+    private final String value;
+
+    JobStatus(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

@@ -3,18 +3,14 @@ package com.hirequick.model;
 import com.hirequick.converter.GenericJsonConverter;
 import com.hirequick.enums.*;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "jobs")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Job {
@@ -23,11 +19,13 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "company_id", nullable = false)
-    private Long companyId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 
-    @Column(name = "recruiter_id", nullable = false)
-    private Long recruiterId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recruiter_id", nullable = false)
+    private RecruiterProfile recruiter;
 
     @Column(nullable = false, length = 200)
     private String title;
@@ -36,6 +34,7 @@ public class Job {
     private String slug;
 
     @Lob
+    @Column(nullable = false)
     private String description;
 
     @Lob
@@ -54,7 +53,6 @@ public class Job {
     private String city;
     private String state;
     private String country;
-
     private Boolean isRemoteOk = false;
 
     @Convert(converter = GenericJsonConverter.class)
@@ -71,19 +69,14 @@ public class Job {
 
     private Integer salaryMin;
     private Integer salaryMax;
-
-    @Column(length = 3)
     private String salaryCurrency = "USD";
-
-    @Column(length = 20)
     private String salaryType = "annual";
-
     private Boolean equityOffered = false;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = com.hirequick.converter.GenericJsonConverter.class)
     private List<String> benefits;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = com.hirequick.converter.GenericJsonConverter.class)
     private List<String> perks;
 
     private ZonedDateTime applicationDeadline;
@@ -117,6 +110,15 @@ public class Job {
     private ZonedDateTime publishedAt;
     private ZonedDateTime expiresAt;
 
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ApplicationFormField> formFields;
+
+    @OneToMany(mappedBy = "job")
+    private List<Application> applications;
+
+    @OneToMany(mappedBy = "job")
+    private List<SavedJob> savedBy;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = ZonedDateTime.now();
@@ -125,5 +127,20 @@ public class Job {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = ZonedDateTime.now();
+    }
+
+    @Transient
+    public String getSalaryRange() {
+        if (salaryMin != null && salaryMax != null) {
+            return "$" + salaryMin + " - $" + salaryMax;
+        } else if (salaryMin != null) {
+            return "$" + salaryMin + "+";
+        }
+        return null;
+    }
+
+    @Transient
+    public boolean isExpired() {
+        return expiresAt != null && expiresAt.isBefore(ZonedDateTime.now());
     }
 }

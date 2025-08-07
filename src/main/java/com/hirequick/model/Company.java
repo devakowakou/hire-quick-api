@@ -1,29 +1,24 @@
 package com.hirequick.model;
 
-import com.hirequick.converter.GenericJsonConverter;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.OffsetDateTime;
+import java.util.List;
+
 import com.hirequick.enums.CompanySize;
 import com.hirequick.enums.CompanyType;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "companies")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Company {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false, length = 200)
     private String name;
@@ -31,12 +26,13 @@ public class Company {
     @Column(nullable = false, unique = true, length = 200)
     private String slug;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(length = 500)
     private String tagline;
 
+    @Column(length = 100)
     private String industry;
 
     @Enumerated(EnumType.STRING)
@@ -47,6 +43,7 @@ public class Company {
 
     private Integer foundedYear;
 
+    @Column(length = 500)
     private String website;
 
     @Column(length = 255)
@@ -55,10 +52,19 @@ public class Company {
     @Column(length = 20)
     private String phone;
 
+    @Column(length = 200)
     private String addressLine1;
+
+    @Column(length = 200)
     private String addressLine2;
+
+    @Column(length = 100)
     private String city;
+
+    @Column(length = 100)
     private String state;
+
+    @Column(length = 100)
     private String country;
 
     @Column(length = 20)
@@ -82,77 +88,53 @@ public class Company {
     @Column(length = 500)
     private String coverImage;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String mission;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String vision;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
     private List<String> values;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
     private List<String> cultureKeywords;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
     private List<String> benefits;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
     private List<String> perks;
 
     private Integer employeeCount;
+
     private Double annualRevenue;
 
     @Column(length = 50)
     private String fundingStage;
 
     private Boolean isVerified = false;
+
     private Boolean isActive = true;
+
     private Boolean allowApplications = true;
 
     @Column(length = 200)
     private String metaTitle;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String metaDescription;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
     private List<String> keywords;
 
-    private ZonedDateTime createdAt;
-    private ZonedDateTime updatedAt;
+    private OffsetDateTime createdAt;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<RecruiterProfile> recruiters;
+    private OffsetDateTime updatedAt;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Job> jobs;
+    @OneToMany(mappedBy = "company")
+    private List<RecruiterProfile> recruiters;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
-
-    @Transient
-    public String getFullAddress() {
-        return String.join(", ",
-                List.of(addressLine1, addressLine2, city, state, postalCode, country)
-                        .stream()
-                        .filter(s -> s != null && !s.isBlank())
-                        .toList());
-    }
-
-    @Transient
-    public String getLocation() {
-        return String.join(", ",
-                List.of(city, state, country)
-                        .stream()
-                        .filter(s -> s != null && !s.isBlank())
-                        .toList());
-    }
+    @OneToMany(mappedBy = "company")
+    private List<Job> jobs;
 }

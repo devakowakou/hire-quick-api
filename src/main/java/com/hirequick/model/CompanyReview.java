@@ -2,45 +2,48 @@ package com.hirequick.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.ZonedDateTime;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "company_reviews")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompanyReview {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false, length = 200)
     private String title;
 
-    @Lob
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    private Double overallRating;
+    private Float overallRating;
 
-    private Double cultureRating;
-    private Double compensationRating;
-    private Double workLifeBalanceRating;
-    private Double managementRating;
-    private Double careerGrowthRating;
+    private Float cultureRating;
+
+    private Float compensationRating;
+
+    private Float workLifeBalanceRating;
+
+    private Float managementRating;
+
+    private Float careerGrowthRating;
 
     @Column(length = 50)
     private String employmentStatus;
@@ -51,28 +54,22 @@ public class CompanyReview {
     @Column(length = 50)
     private String employmentDuration;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String pros;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String cons;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String adviceToManagement;
 
     private Boolean isApproved = false;
+
     private Boolean isAnonymous = true;
 
+    @CreationTimestamp
     private ZonedDateTime createdAt;
+
+    @UpdateTimestamp
     private ZonedDateTime updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
 }

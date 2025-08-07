@@ -1,41 +1,50 @@
 package com.hirequick.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "job_views")
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class JobView {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long jobId;
-    private Long userId;
+    // Relations
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "job_id", nullable = false)
+    private Job job;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true) 
+    private User user;
+
+    // Métadonnées de vue
     @Column(length = 45)
     private String ipAddress;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String userAgent;
 
     @Column(length = 500)
     private String referrer;
 
+    // Timestamp
+    @CreationTimestamp
     private ZonedDateTime viewedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.viewedAt = ZonedDateTime.now();
+    @Override
+    public String toString() {
+        return String.format("JobView(jobId=%d, userId=%s)",
+                job != null ? job.getId() : null,
+                user != null ? user.getId() : "anonymous");
     }
 }

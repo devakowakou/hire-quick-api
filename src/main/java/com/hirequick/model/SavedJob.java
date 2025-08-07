@@ -1,38 +1,44 @@
 package com.hirequick.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.ZonedDateTime;
-
-
 
 @Entity
 @Table(name = "saved_jobs")
-@Getter
-@Setter
+
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Builder
 public class SavedJob {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long candidateId;
-    private Long jobId;
+    // Relations
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "candidate_id", nullable = false)
+    private CandidateProfile candidate;
 
-    @Lob
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "job_id", nullable = false)
+    private Job job;
+
+    // Notes privées du candidat
+    @Column(columnDefinition = "TEXT")
     private String notes;
 
+    // Date d’enregistrement
+    @CreationTimestamp
     private ZonedDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
+    @Override
+    public String toString() {
+        return String.format("SavedJob(candidateId=%d, jobId=%d)", 
+                candidate != null ? candidate.getId() : null, 
+                job != null ? job.getId() : null);
     }
 }

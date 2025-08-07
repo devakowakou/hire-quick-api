@@ -16,8 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Getter
-@Setter
 @Table(name = "candidate_profiles")
 public class CandidateProfile {
 

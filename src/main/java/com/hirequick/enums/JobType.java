@@ -1,10 +1,20 @@
 package com.hirequick.enums;
 
 public enum JobType {
-    FULL_TIME,
-    PART_TIME,
-    CONTRACT,
-    INTERNSHIP,
-    FREELANCE,
-    TEMPORARY
+    FULL_TIME("full_time"),
+    PART_TIME("part_time"),
+    CONTRACT("contract"),
+    INTERNSHIP("internship"),
+    FREELANCE("freelance"),
+    TEMPORARY("temporary");
+
+    private final String value;
+
+    JobType(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
