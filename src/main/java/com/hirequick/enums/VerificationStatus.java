@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum VerificationStatus {
     PENDING("pending"),
     IN_PROGRESS("in_progress"),
@@ -11,10 +14,6 @@ public enum VerificationStatus {
 
     VerificationStatus(String value) {
         this.value = value;
-    }  
-
-    public String getValue() {
-        return value;
     }
 
 }

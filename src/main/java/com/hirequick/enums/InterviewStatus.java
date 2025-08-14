@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum InterviewStatus {
     SCHEDULED("scheduled"),
     CONFIRMED("confirmed"),
@@ -15,7 +18,4 @@ public enum InterviewStatus {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

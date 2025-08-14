@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum JobStatus {
     DRAFT("draft"),
     ACTIVE("active"),
@@ -13,7 +16,4 @@ public enum JobStatus {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

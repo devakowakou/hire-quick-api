@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum CompanyType {
     STARTUP("startup"),
     CORPORATION("corporation"),
@@ -9,13 +12,10 @@ public enum CompanyType {
     CONSULTING("consulting"),
     OTHER("other");
 
-    private String value;
+    private final String value;
 
     CompanyType(String value) {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

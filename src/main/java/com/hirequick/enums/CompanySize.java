@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum CompanySize {
     STARTUP("startup"),   // 1-10 employees
     SMALL("small"),       // 11-50 employees
@@ -13,7 +16,4 @@ public enum CompanySize {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

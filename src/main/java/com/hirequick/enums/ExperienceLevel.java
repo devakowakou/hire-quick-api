@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ExperienceLevel {
     ENTRY("entry"),
     JUNIOR("junior"),
@@ -14,7 +17,4 @@ public enum ExperienceLevel {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

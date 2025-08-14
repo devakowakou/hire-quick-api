@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum InterviewType {
     PHONE("phone"),
     VIDEO("video"),
@@ -15,7 +18,4 @@ public enum InterviewType {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

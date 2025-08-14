@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum RemoteType {
     ONSITE("onsite"),
     REMOTE("remote"),
@@ -11,7 +14,4 @@ public enum RemoteType {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

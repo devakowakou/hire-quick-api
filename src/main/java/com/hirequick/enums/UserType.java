@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum UserType {
     CANDIDATE("candidate"),
     RECRUITER("recruiter"),
@@ -9,10 +12,6 @@ public enum UserType {
 
     UserType(String value) {
         this.value = value;
-    }  
-
-    public String getValue() {
-        return value;
     }
 
 }

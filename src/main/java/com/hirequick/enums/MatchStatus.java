@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum MatchStatus {
     PENDING("pending"),
     VIEWED("viewed"),
@@ -14,7 +17,4 @@ public enum MatchStatus {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }

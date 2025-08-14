@@ -1,5 +1,8 @@
 package com.hirequick.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum JobType {
     FULL_TIME("full_time"),
     PART_TIME("part_time"),
@@ -14,7 +17,4 @@ public enum JobType {
         this.value = value;
     }
 
-    public String getValue() {
-        return value;
-    }
 }
