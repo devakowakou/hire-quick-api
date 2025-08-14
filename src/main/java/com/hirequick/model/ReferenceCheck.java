@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import com.hirequick.converter.GenericJsonConverter;
-
+import com.hirequick.converter.StringListJsonConverter;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -65,11 +63,11 @@ public class ReferenceCheck {
     private Double communicationRating;
 
     // Feedback
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> strengths;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> areasForImprovement;
 

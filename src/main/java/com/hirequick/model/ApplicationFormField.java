@@ -19,11 +19,12 @@ public class ApplicationFormField {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Chaque champ appartient à un job
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", nullable = false)
     private Job job;
 
-    // Field configuration
+    // Configuration du champ
     @Column(name = "field_type", length = 50, nullable = false)
     private String fieldType;
 
@@ -36,7 +37,7 @@ public class ApplicationFormField {
     @Column(columnDefinition = "TEXT")
     private String helpText;
 
-    // Field validation
+    // Validation
     @Column(name = "is_required")
     private Boolean isRequired = true;
 
@@ -44,13 +45,13 @@ public class ApplicationFormField {
 
     private Integer maxLength;
 
-    // Field options (for select, radio, checkbox)
+    // Options pour select, radio, checkbox
     @ElementCollection
     @CollectionTable(name = "application_form_field_options", joinColumns = @JoinColumn(name = "form_field_id"))
     @Column(name = "option_value")
     private List<String> options;
 
-    // File upload settings
+    // Paramètres pour upload de fichier
     @ElementCollection
     @CollectionTable(name = "application_form_field_file_types", joinColumns = @JoinColumn(name = "form_field_id"))
     @Column(name = "file_type")
@@ -59,7 +60,7 @@ public class ApplicationFormField {
     @Column(name = "max_file_size_mb")
     private Integer maxFileSizeMb = 10;
 
-    // Field ordering
+    // Ordre du champ
     @Column(name = "field_order")
     private Integer order = 0;
 
@@ -71,9 +72,6 @@ public class ApplicationFormField {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private ZonedDateTime updatedAt;
-
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ApplicationFormField> formFields;
 
     @Override
     public String toString() {

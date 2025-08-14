@@ -1,12 +1,17 @@
 package com.hirequick.model;
 
-import com.hirequick.converter.GenericJsonConverter;
-import com.hirequick.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
-
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import com.hirequick.enums.ExperienceLevel;
+import com.hirequick.enums.JobStatus;
+import com.hirequick.enums.JobType;
+import com.hirequick.enums.RemoteType;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+
 
 @Entity
 @Table(name = "jobs")
@@ -19,6 +24,7 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Relations
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
@@ -27,17 +33,17 @@ public class Job {
     @JoinColumn(name = "recruiter_id", nullable = false)
     private RecruiterProfile recruiter;
 
+    // Informations de base
     @Column(nullable = false, length = 200)
     private String title;
 
     @Column(nullable = false, length = 200)
     private String slug;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String summary;
 
     @Enumerated(EnumType.STRING)
@@ -46,39 +52,69 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private ExperienceLevel experienceLevel = ExperienceLevel.MID;
 
+
     @Enumerated(EnumType.STRING)
     private RemoteType remoteType = RemoteType.ONSITE;
 
+    // Localisation
+    @Column(length = 200)
     private String location;
+
+    @Column(length = 100)
     private String city;
+
+    @Column(length = 100)
     private String state;
+
+    @Column(length = 100)
     private String country;
+
     private Boolean isRemoteOk = false;
 
-    @Convert(converter = GenericJsonConverter.class)
+    // Exigences et qualifications (JSON équivalent → List<String>)
+    @ElementCollection
+    @CollectionTable(name = "job_requirements", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "requirement")
     private List<String> requirements;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "preferred_qualifications", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "qualification")
     private List<String> preferredQualifications;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "education_requirements", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "education")
     private List<String> educationRequirements;
 
+    // Expérience
     private Integer minExperienceYears = 0;
     private Integer maxExperienceYears;
 
+    // Rémunération
     private Integer salaryMin;
     private Integer salaryMax;
+
+    @Column(length = 3)
     private String salaryCurrency = "USD";
-    private String salaryType = "annual";
+
+    @Column(length = 20)
+    private String salaryType = "annual"; // annual, hourly, project
+
     private Boolean equityOffered = false;
 
-    @Convert(converter = com.hirequick.converter.GenericJsonConverter.class)
+    // Avantages
+    @ElementCollection
+    @CollectionTable(name = "job_benefits", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "benefit")
     private List<String> benefits;
 
-    @Convert(converter = com.hirequick.converter.GenericJsonConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "job_perks", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "perk")
     private List<String> perks;
 
+    // Paramètres de candidature
     private ZonedDateTime applicationDeadline;
     private Integer maxApplications;
     private Boolean autoRejectAfterDeadline = false;
@@ -93,54 +129,43 @@ public class Job {
     private Boolean isFeatured = false;
     private Boolean isUrgent = false;
 
-    @Convert(converter = GenericJsonConverter.class)
+    // SEO et catégorisation
+    @ElementCollection
+    @CollectionTable(name = "job_keywords", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "keyword")
     private List<String> keywords;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @ElementCollection
+    @CollectionTable(name = "job_tags", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "tag")
     private List<String> tags;
 
     private String category;
     private String department;
 
+    // Analytique
     private Integer viewCount = 0;
     private Integer applicationCount = 0;
 
+    // Timestamps
+    @CreationTimestamp
+    @Column(updatable = false)
     private ZonedDateTime createdAt;
+
+    @UpdateTimestamp
     private ZonedDateTime updatedAt;
+
     private ZonedDateTime publishedAt;
     private ZonedDateTime expiresAt;
 
+    // Relations
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationFormField> formFields;
 
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Application> applications;
 
-    @OneToMany(mappedBy = "job")
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SavedJob> savedBy;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
-
-    @Transient
-    public String getSalaryRange() {
-        if (salaryMin != null && salaryMax != null) {
-            return "$" + salaryMin + " - $" + salaryMax;
-        } else if (salaryMin != null) {
-            return "$" + salaryMin + "+";
-        }
-        return null;
-    }
-
-    @Transient
-    public boolean isExpired() {
-        return expiresAt != null && expiresAt.isBefore(ZonedDateTime.now());
-    }
 }

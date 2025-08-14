@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: hirequick_postgres_local
+    environment:
+      POSTGRES_USER: hirequick
+      POSTGRES_PASSWORD: hirequick123
+      POSTGRES_DB: hirequick_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hirequick"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+volumes:
+  postgres_data:

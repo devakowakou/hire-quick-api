@@ -8,12 +8,12 @@ import jakarta.persistence.Converter;
 import java.util.List;
 
 @Converter
-public class StringListJsonConverter implements AttributeConverter<List<String>, String> {
+public class ObjectListJsonConverter implements AttributeConverter<List<Object>, String> {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public String convertToDatabaseColumn(List<String> attribute) {
+    public String convertToDatabaseColumn(List<Object> attribute) {
         try {
             return objectMapper.writeValueAsString(attribute);
         } catch (Exception e) {
@@ -22,9 +22,9 @@ public class StringListJsonConverter implements AttributeConverter<List<String>,
     }
 
     @Override
-    public List<String> convertToEntityAttribute(String dbData) {
+    public List<Object> convertToEntityAttribute(String dbData) {
         try {
-            return objectMapper.readValue(dbData, new TypeReference<List<String>>() {});
+            return objectMapper.readValue(dbData, new TypeReference<List<Object>>() {});
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

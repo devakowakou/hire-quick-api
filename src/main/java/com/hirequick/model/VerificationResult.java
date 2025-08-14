@@ -1,15 +1,13 @@
 package com.hirequick.model;
 
+import com.hirequick.converter.ObjectListJsonConverter;
 import com.hirequick.enums.VerificationStatus;
-import com.hirequick.converter.GenericJsonConverter;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "verification_results")
@@ -43,11 +41,11 @@ public class VerificationResult {
     private String result;  // clear, flagged, failed, unable_to_verify
 
     // Verification data
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = ObjectListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
-    private Map<String, Object> dataVerified;
+    private List<Object> dataVerified;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = ObjectListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<Object> findings;
 
@@ -59,9 +57,9 @@ public class VerificationResult {
     private String notes;
 
     // Provider information
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = ObjectListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
-    private Map<String, Object> providerResponse;
+    private List<Object> providerResponse;
 
     @Column(length = 100)
     private String providerReference;

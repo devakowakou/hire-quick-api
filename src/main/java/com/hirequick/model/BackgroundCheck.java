@@ -1,7 +1,8 @@
 package com.hirequick.model;
 
 import com.hirequick.enums.VerificationStatus;
-import com.hirequick.converter.GenericJsonConverter;
+import com.hirequick.converter.StringListJsonConverter;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,7 +35,7 @@ public class BackgroundCheck {
     private RecruiterProfile requestedBy;
 
     // Check configuration
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> verificationTypes;
 

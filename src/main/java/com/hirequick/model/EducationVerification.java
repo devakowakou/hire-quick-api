@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import com.hirequick.converter.GenericJsonConverter;
+import com.hirequick.converter.ObjectListJsonConverter;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -63,7 +64,7 @@ public class EducationVerification {
     @Lob
     private String verificationNotes;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = ObjectListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<Object> discrepancies;
 

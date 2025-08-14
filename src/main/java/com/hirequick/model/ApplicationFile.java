@@ -1,16 +1,15 @@
 package com.hirequick.model;
-import java.time.ZonedDateTime;
-import java.util.List;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "application_form_fields")
+@Table(name = "application_files")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,65 +19,52 @@ public class ApplicationFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Relation vers Application
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_id", nullable = false)
-    private Job job;
+    @JoinColumn(name = "application_id", nullable = false)
+    private Application application;
 
-    // Field configuration
-    @Column(name = "field_type", length = 50, nullable = false)
-    private String fieldType;
+    // Relation optionnelle vers le champ du formulaire
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "form_field_id")
+    private ApplicationFormField formField;
 
-    @Column(nullable = false, length = 200)
-    private String label;
+    // File information
+    @Column(name = "file_path", length = 500, nullable = false)
+    private String filePath;
 
-    @Column(length = 200)
-    private String placeholder;
+    @Column(name = "original_filename", length = 255, nullable = false)
+    private String originalFilename;
 
-    @Column(columnDefinition = "TEXT")
-    private String helpText;
+    @Column(name = "file_size", nullable = false)
+    private Long fileSize; // en bytes
 
-    // Field validation
-    @Column(name = "is_required", nullable = false, columnDefinition = "boolean default true")
-    private Boolean isRequired = true;
+    @Column(name = "content_type", length = 100, nullable = false)
+    private String contentType;
 
-    private Integer minLength;
+    @Column(name = "file_type", length = 50)
+    private String fileType; // resume, cover_letter, portfolio, etc.
 
-    private Integer maxLength;
+    // File processing status
+    @Column(name = "is_processed", nullable = false)
+    private Boolean isProcessed = false;
 
-    // Field options (for select, radio, checkbox)
-    @ElementCollection
-    @CollectionTable(name = "application_form_field_options", joinColumns = @JoinColumn(name = "form_field_id"))
-    @Column(name = "option_value")
-    private List<String> options;
+    @Column(name = "processing_status", length = 20)
+    private String processingStatus = "pending"; // pending, processing, completed, failed
 
-    // File upload settings
-    @ElementCollection
-    @CollectionTable(name = "application_form_field_file_types", joinColumns = @JoinColumn(name = "form_field_id"))
-    @Column(name = "file_type")
-    private List<String> allowedFileTypes;
-
-    @Column(name = "max_file_size_mb")
-    private Integer maxFileSizeMb = 10;
-
-    // Field ordering
-    @Column(name = "field_order")
-    private Integer fieldOrder = 0;
+    @Column(name = "processing_error", columnDefinition = "TEXT")
+    private String processingError;
 
     // Timestamps
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private ZonedDateTime createdAt;
+    @Column(name = "uploaded_at", updatable = false)
+    private ZonedDateTime uploadedAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private ZonedDateTime updatedAt;
+    @Column(name = "processed_at")
+    private ZonedDateTime processedAt;
 
     @Override
     public String toString() {
-        return "ApplicationFormField{" +
-                "id=" + id +
-                ", label='" + label + '\'' +
-                ", jobId=" + (job != null ? job.getId() : null) +
-                '}';
+        return String.format("<ApplicationFile(id=%d, filename='%s')>", id, originalFilename);
     }
 }

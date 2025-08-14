@@ -2,7 +2,7 @@ package com.hirequick.model;
 
 import com.hirequick.enums.InterviewStatus;
 import com.hirequick.enums.InterviewType;
-import com.hirequick.converter.GenericJsonConverter;
+import com.hirequick.converter.StringListJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -71,15 +71,15 @@ public class Interview {
 
     private Double rating;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> questions;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> responses;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<Long> additionalInterviewers;
 

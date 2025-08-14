@@ -1,6 +1,5 @@
 package com.hirequick.model;
 
-import com.hirequick.converter.GenericJsonConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +8,9 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.hirequick.converter.ObjectListJsonConverter;
+import com.hirequick.converter.StringListJsonConverter;
 
 @Entity
 @Table(name = "parsed_resumes")
@@ -43,41 +45,41 @@ public class ParsedResume {
     @Lob
     private String objective;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> technicalSkills;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> softSkills;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> languages;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> certifications;
 
     private Double totalExperienceYears = 0.0;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = ObjectListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<Object> workExperience;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = ObjectListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<Object> education;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = ObjectListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<Object> projects;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = ObjectListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<Object> achievements;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = ObjectListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<Object> publications;
 
@@ -92,15 +94,15 @@ public class ParsedResume {
 
     private Double aiScore;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> strengths;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> improvementSuggestions;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> suitableRoles;
 
@@ -109,11 +111,11 @@ public class ParsedResume {
 
     private Double skillMatchScore = 0.0;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> matchedSkills;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> missingSkills;
 
@@ -122,7 +124,7 @@ public class ParsedResume {
 
     private Double parsingConfidence;
 
-    @Convert(converter = GenericJsonConverter.class)
+    @Convert(converter = StringListJsonConverter.class)
     @Column(columnDefinition = "jsonb")
     private List<String> parsingErrors;
 
