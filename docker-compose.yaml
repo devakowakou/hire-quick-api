@@ -3,20 +3,28 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: hirequick_postgres_local
+    container_name: hire-quick_postgres_local
+    restart: always
     environment:
-      POSTGRES_USER: hirequickUser 
-      POSTGRES_PASSWORD: hirequickPassword
-      POSTGRES_DB: hirequick_database
+      POSTGRES_USER: hire-quickUser
+      POSTGRES_PASSWORD: hire-quickPassword
+      POSTGRES_DB: hire-quick_database
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U hirequickUser -d hirequick_database"]
+      test: ["CMD-SHELL", "pg_isready -U hire-quickUser -d hire-quick_database"]
       interval: 5s
       timeout: 5s
       retries: 5
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    container_name: mailhog
+    restart: always
+    ports:
+      - "1025:1025"   # Port SMTP
+      - "8025:8025"   # Interface Web
 
 volumes:
   postgres_data:
